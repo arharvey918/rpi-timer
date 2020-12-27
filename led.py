@@ -8,18 +8,34 @@ from datetime import timedelta
 TIMER_LENGTH = 10
 
 button_pressed = False
+button_pressed_start = None
+
+
+exit_signal = False
+reset_signal = False
+start_signal = False
 
 # Define a threaded callback function to run in another thread when events are detected
 
 
 def button_callback(channel):
-    global button_pressed
+    global button_pressed_start, exit_signal, reset_signal, start_signal
 
     if GPIO.input(25):     # if port 25 == 1
         print("Rising edge detected on 25")
-        button_pressed = True
+        button_pressed_start = datetime.now()
     else:                  # if port 25 != 1
         print("Falling edge detected on 25")
+        button_pressed_length = datetime.now() - button_pressed_start
+        if button_pressed_length.seconds > 5:
+            print("BUTTON: exit")
+            exit_signal = True
+        elif button_pressed_length.seconds > 2:
+            print("BUTTON: reset/stop")
+            reset_signal = True
+        else:
+            print("BUTTON: start")
+            start_signal = True
 
 
 def flicker():
@@ -85,15 +101,15 @@ if __name__ == "__main__":
     GPIO.output(24, GPIO.HIGH)
 
     try:
-        while not button_pressed:
+        while not start_signal:
             time.sleep(.1)
 
-        button_pressed = False
+        start_signal = False
         print("Continuing")
         start_timer(TIMER_LENGTH)
 
-        print("Press button to stop program")
-        while not button_pressed:
+        print("Press button for 5 seconds to stop program")
+        while not exit_signal:
             time.sleep(1)
 
     finally:                   # this block will run no matter how the try block exits
