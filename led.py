@@ -21,7 +21,7 @@ interrupted = False
 
 
 def button_callback(channel):
-    global button_pressed_start, exit_signal, reset_signal, start_signal
+    global button_pressed_start, exit_signal, reset_signal, start_signal, interrupted
 
     if GPIO.input(25):     # if port 25 == 1
         print("Rising edge detected on 25")
@@ -115,10 +115,12 @@ if __name__ == "__main__":
             while not start_signal:
                 time.sleep(.5)
 
-            start_signal = False
             print("Timer started")
             start_timer(TIMER_LENGTH)
+
+            # Reset these flags after the timer ends
             reset_signal = False
+            start_signal = False
 
             if exit_signal:
                 break
