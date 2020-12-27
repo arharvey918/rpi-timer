@@ -15,6 +15,8 @@ exit_signal = False
 reset_signal = False
 start_signal = False
 
+interrupted = False
+
 # Define a threaded callback function to run in another thread when events are detected
 
 
@@ -30,9 +32,11 @@ def button_callback(channel):
         if button_pressed_length.seconds > 5:
             print("BUTTON: exit")
             exit_signal = True
+            interrupted = True
         elif button_pressed_length.seconds > 2:
             print("BUTTON: reset/stop")
             reset_signal = True
+            interrupted = True
         else:
             print("BUTTON: start")
             start_signal = True
@@ -64,6 +68,8 @@ def complete():
 
 
 def start_timer(seconds):
+    global interrupted
+
     # Mark timer as in-progress
     in_progress()
 
@@ -76,6 +82,10 @@ def start_timer(seconds):
     # Loop until we get to end
     while datetime.now() < end:
         tick()
+
+        if interrupted:
+            interrupted = False  # Clear the flag and exit            
+            break
 
     complete()
 
@@ -94,23 +104,27 @@ if __name__ == "__main__":
     # Setup event on pin 25 rising edge
     GPIO.add_event_detect(25, GPIO.BOTH, callback=button_callback)
 
-    # Main loop
-    print("Press button to start timer")
-
-    # Mark us as ready
-    GPIO.output(24, GPIO.HIGH)
-
     try:
-        while not start_signal:
-            time.sleep(.1)
+        while True:
+            # Main loop
+            # Mark us as ready
+            GPIO.output(24, GPIO.HIGH)
 
-        start_signal = False
-        print("Continuing")
-        start_timer(TIMER_LENGTH)
+            print("Press button to start timer")
 
-        print("Press button for 5 seconds to stop program")
-        while not exit_signal:
-            time.sleep(1)
+            while not start_signal:
+                time.sleep(.5)
+
+            start_signal = False
+            print("Timer started")
+            start_timer(TIMER_LENGTH)
+            reset_signal = False
+
+            if exit_signal:
+                break
+            else:
+                print("Press button for 5 seconds to end program")
+
 
     finally:                   # this block will run no matter how the try block exits
         print("Cleaning up")
