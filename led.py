@@ -70,7 +70,7 @@ if __name__ == "__main__":
     GPIO.add_event_detect(25,GPIO.BOTH,callback=button_callback) # Setup event on pin 25 rising edge
 
     # Main loop
-    print("Press button to start timer)
+    print("Press button to start timer")
 
     # Mark us as ready
     complete()
