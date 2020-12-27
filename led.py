@@ -1,13 +1,17 @@
 import RPi.GPIO as GPIO
 import time
 
+reset_pressed = False
 
 # Define a threaded callback function to run in another thread when events are detected  
 def button_callback(channel):  
     if GPIO.input(25):     # if port 25 == 1  
         print("Rising edge detected on 25")
+        reset_pressed = True
     else:                  # if port 25 != 1  
         print("Falling edge detected on 25")  
+
+# Setup
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
@@ -19,12 +23,20 @@ GPIO.setup(24,GPIO.OUT)
 
 GPIO.add_event_detect(25,GPIO.BOTH,callback=button_callback) # Setup event on pin 25 rising edge
 
-GPIO.output(24,GPIO.HIGH)
-time.sleep(1)
-GPIO.output(24,GPIO.LOW)
+# Main loop
 
-GPIO.output(23,GPIO.HIGH)
-time.sleep(1)
-GPIO.output(23,GPIO.LOW)
+try:
+    while not reset_pressed:
+        time.sleep(.1)
+    
+    GPIO.output(24,GPIO.HIGH)
+    time.sleep(1)
+    GPIO.output(24,GPIO.LOW)
 
-GPIO.cleanup()
+    GPIO.output(23,GPIO.HIGH)
+    time.sleep(1)
+    GPIO.output(23,GPIO.LOW)  
+
+finally:                   # this block will run no matter how the try block exits  
+    print("Cleaning up")
+    GPIO.cleanup()         # clean up after yourself  
