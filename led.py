@@ -22,9 +22,9 @@ def button_callback(channel):
 def flicker():
     for i in range(4):
         GPIO.output(23,GPIO.HIGH)
-        time.sleep(.25)
+        time.sleep(.1)
         GPIO.output(23,GPIO.LOW)
-        time.sleep(.25)
+        time.sleep(.1)
 
 def tick():
     GPIO.output(23,GPIO.HIGH)
@@ -32,10 +32,16 @@ def tick():
     GPIO.output(23,GPIO.LOW)
     time.sleep(.5)
 
+def in_progress():
+    GPIO.output(24,GPIO.LOW)
+
 def complete():
     GPIO.output(24,GPIO.HIGH)
 
 def start_timer(seconds):
+    # Mark timer as in-progress
+    in_progress()
+
     # Calculate start time
     start = datetime.now()
 
@@ -46,7 +52,7 @@ def start_timer(seconds):
     flicker()
 
     # Loop until we get to end
-    while end < datetime.now():
+    while datetime.now() < end:
         tick()
     
     complete()
@@ -64,7 +70,10 @@ if __name__ == "__main__":
     GPIO.add_event_detect(25,GPIO.BOTH,callback=button_callback) # Setup event on pin 25 rising edge
 
     # Main loop
-    print("Main loop starting")
+    print("Press button to start timer)
+
+    # Mark us as ready
+    complete()
 
     try:
         while not button_pressed:
