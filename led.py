@@ -38,8 +38,8 @@ def tick():
 
 
 def in_progress():
-    flicker()
     GPIO.output(24, GPIO.LOW)
+    flicker()
 
 
 def complete():
