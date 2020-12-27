@@ -5,9 +5,9 @@ import time
 # Define a threaded callback function to run in another thread when events are detected  
 def button_callback(channel):  
     if GPIO.input(25):     # if port 25 == 1  
-        print "Rising edge detected on 25"  
+        print("Rising edge detected on 25")
     else:                  # if port 25 != 1  
-        print "Falling edge detected on 25"  
+        print("Falling edge detected on 25")  
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
