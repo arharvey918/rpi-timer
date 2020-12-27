@@ -5,7 +5,7 @@ from datetime import datetime
 from datetime import timedelta
 
 # Timer length in seconds
-TIMER_LENGTH = 5
+TIMER_LENGTH = 10
 
 button_pressed = False
 
