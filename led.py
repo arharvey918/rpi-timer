@@ -4,7 +4,9 @@ import time
 reset_pressed = False
 
 # Define a threaded callback function to run in another thread when events are detected  
-def button_callback(channel):  
+def button_callback(channel):
+    global reset_pressed
+
     if GPIO.input(25):     # if port 25 == 1  
         print("Rising edge detected on 25")
         reset_pressed = True
@@ -24,11 +26,13 @@ GPIO.setup(24,GPIO.OUT)
 GPIO.add_event_detect(25,GPIO.BOTH,callback=button_callback) # Setup event on pin 25 rising edge
 
 # Main loop
+print("Main loop starting")
 
 try:
     while not reset_pressed:
         time.sleep(.1)
     
+    print("Continuing")
     GPIO.output(24,GPIO.HIGH)
     time.sleep(1)
     GPIO.output(24,GPIO.LOW)
