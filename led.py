@@ -102,12 +102,14 @@ def start_timer(seconds):
         tick()
 
         delta = end - datetime.now()
-        pin_index = math.ceil(delta.seconds / float(seconds) * len(PROGRESS))
-        pin_index = max(0, pin_index)
 
-        # Set new tick pin
-        print("pin index is %d" % pin_index)
-        tick_pin = PROGRESS[pin_index]
+        if delta.days >= 0:
+            pin_index = math.ceil(delta.seconds / float(seconds) * len(PROGRESS))
+            pin_index = max(0, pin_index)
+
+            # Set new tick pin
+            print("pin index is %d" % pin_index)
+            tick_pin = PROGRESS[pin_index]
 
         if interrupted:
             interrupted = False  # Clear the flag and exit            
