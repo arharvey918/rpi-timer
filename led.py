@@ -36,11 +36,11 @@ def button_callback(channel):
     else:                  # if port 25 != 1
         print("Falling edge detected on 25")
         button_pressed_length = datetime.now() - button_pressed_start
-        if button_pressed_length.seconds > 5:
+        if button_pressed_length.seconds > 3:
             print("BUTTON: exit")
             exit_signal = True
             interrupted = True
-        elif button_pressed_length.seconds > 2:
+        elif button_pressed_length.seconds > 1:
             print("BUTTON: reset/stop")
             reset_signal = True
             interrupted = True
