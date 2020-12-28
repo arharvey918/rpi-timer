@@ -6,7 +6,7 @@ from datetime import datetime
 from datetime import timedelta
 
 # Timer length in seconds
-TIMER_LENGTH = 10
+TIMER_LENGTH = 30
 
 # GPIO constants
 GREEN = 24
@@ -77,9 +77,9 @@ def in_progress():
 
 def complete():
     global GREEN
-    flicker()
     for pin in PROGRESS:
         GPIO.output(pin, GPIO.LOW)
+    flicker()
 
     GPIO.output(GREEN, GPIO.HIGH)
 
