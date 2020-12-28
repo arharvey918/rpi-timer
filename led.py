@@ -1,5 +1,6 @@
 import RPi.GPIO as GPIO
 import time
+import math
 
 from datetime import datetime
 from datetime import timedelta
@@ -66,9 +67,12 @@ def tick():
 
 
 def in_progress():
-    global GREEN
+    global GREEN, PROGRESS
     GPIO.output(GREEN, GPIO.LOW)
     flicker()
+
+    for pin in PROGRESS:
+        GPIO.output(pin, GPIO.HIGH)
 
 
 def complete():
@@ -91,15 +95,17 @@ def start_timer(seconds):
     end = start + timedelta(seconds=seconds)
 
     # Set tick pin
-    tick_pin = PROGRESS[0]
+    tick_pin = PROGRESS[len(PROGRESS)]
 
     # Loop until we get to end
     while datetime.now() < end:
         tick()
 
+        delta = end - datetime.now()
+        pin_index = math.ceil(delta.seconds / float(seconds) * len(PROGRESS))
+
         # Set new tick pin
-        counter += 1
-        tick_pin = PROGRESS[counter % 5]
+        tick_pin = PROGRESS[pin_index]
 
         if interrupted:
             interrupted = False  # Clear the flag and exit            
