@@ -106,6 +106,7 @@ def start_timer(seconds):
         pin_index = max(0, pin_index)
 
         # Set new tick pin
+        print("pin index is %d" % pin_index)
         tick_pin = PROGRESS[pin_index]
 
         if interrupted:
