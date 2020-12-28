@@ -79,6 +79,7 @@ def complete():
 
 def start_timer(seconds):
     global interrupted, tick_pin, PROGRESS
+    counter = 0
 
     # Mark timer as in-progress
     in_progress()
@@ -95,6 +96,10 @@ def start_timer(seconds):
     # Loop until we get to end
     while datetime.now() < end:
         tick()
+
+        # Set new tick pin
+        counter += 1
+        tick_pin = counter % 5
 
         if interrupted:
             interrupted = False  # Clear the flag and exit            
