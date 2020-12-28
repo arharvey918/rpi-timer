@@ -1,0 +1,14 @@
+[Unit]
+Description=Python Pomodoro timer service
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/python3 -u led.py
+WorkingDirectory=/home/pi/rpi-timer
+StandardOutput=inherit
+StandardError=inherit
+Restart=always
+User=pi
+
+[Install]
+WantedBy=multi-user.target
