@@ -109,7 +109,7 @@ def start_timer(seconds):
         if delta.days >= 0:
             percent_complete = delta.seconds / float(seconds)
             print("percent complete: %.2f" % percent_complete)
-            pin_index = math.ceil(percent_complete * len(PROGRESS))
+            pin_index = math.floor(percent_complete * len(PROGRESS))
             print("preferred pin: %d" % pin_index)
             pin_index = min(max(0, pin_index), len(PROGRESS) - 1)
 
