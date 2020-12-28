@@ -6,7 +6,7 @@ from datetime import datetime
 from datetime import timedelta
 
 # Timer length in seconds
-TIMER_LENGTH = 30
+TIMER_LENGTH = 25
 
 # GPIO constants
 GREEN = 24
