@@ -7,9 +7,13 @@ from datetime import timedelta
 # Timer length in seconds
 TIMER_LENGTH = 10
 
+# GPIO constants
+GREEN = 24
+PROGRESS = [23, 5, 6, 16, 26]
+BUTTON = 25
+
 button_pressed = False
 button_pressed_start = None
-
 
 exit_signal = False
 reset_signal = False
@@ -17,13 +21,15 @@ start_signal = False
 
 interrupted = False
 
+tick_pin = PROGRESS[0]
+
 # Define a threaded callback function to run in another thread when events are detected
 
 
 def button_callback(channel):
-    global button_pressed_start, exit_signal, reset_signal, start_signal, interrupted
+    global button_pressed_start, exit_signal, reset_signal, start_signal, interrupted, BUTTON
 
-    if GPIO.input(25):     # if port 25 == 1
+    if GPIO.input(BUTTON):     # if port 25 == 1
         print("Rising edge detected on 25")
         button_pressed_start = datetime.now()
     else:                  # if port 25 != 1
@@ -43,32 +49,36 @@ def button_callback(channel):
 
 
 def flicker():
+    global PROGRESS
     for i in range(4):
-        GPIO.output(23, GPIO.HIGH)
+        GPIO.output(PROGRESS[0], GPIO.HIGH)
         time.sleep(.1)
-        GPIO.output(23, GPIO.LOW)
+        GPIO.output(PROGRESS[0], GPIO.LOW)
         time.sleep(.1)
 
 
 def tick():
-    GPIO.output(23, GPIO.HIGH)
+    global tick_pin
+    GPIO.output(tick_pin, GPIO.HIGH)
     time.sleep(.5)
-    GPIO.output(23, GPIO.LOW)
+    GPIO.output(tick_pin, GPIO.LOW)
     time.sleep(.5)
 
 
 def in_progress():
-    GPIO.output(24, GPIO.LOW)
+    global GREEN
+    GPIO.output(GREEN, GPIO.LOW)
     flicker()
 
 
 def complete():
+    global GREEN
     flicker()
-    GPIO.output(24, GPIO.HIGH)
+    GPIO.output(GREEN, GPIO.HIGH)
 
 
 def start_timer(seconds):
-    global interrupted
+    global interrupted, tick_pin, PROGRESS
 
     # Mark timer as in-progress
     in_progress()
@@ -78,6 +88,9 @@ def start_timer(seconds):
 
     # Calculate end time
     end = start + timedelta(seconds=seconds)
+
+    # Set tick pin
+    tick_pin = PROGRESS[0]
 
     # Loop until we get to end
     while datetime.now() < end:
@@ -96,19 +109,20 @@ if __name__ == "__main__":
     GPIO.setwarnings(False)
 
     # Set pin 25 to be an input pin and set initial value to be pulled low (off)
-    GPIO.setup(25, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+    GPIO.setup(BUTTON, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
-    GPIO.setup(23, GPIO.OUT)
-    GPIO.setup(24, GPIO.OUT)
+    GPIO.setup(GREEN, GPIO.OUT)
+    for pin in PROGRESS:
+        GPIO.setup(pin, GPIO.OUT)
 
     # Setup event on pin 25 rising edge
-    GPIO.add_event_detect(25, GPIO.BOTH, callback=button_callback)
+    GPIO.add_event_detect(BUTTON, GPIO.BOTH, callback=button_callback)
 
     try:
         while True:
             # Main loop
             # Mark us as ready
-            GPIO.output(24, GPIO.HIGH)
+            GPIO.output(GREEN, GPIO.HIGH)
 
             print("Press button to start timer")
 
@@ -130,6 +144,7 @@ if __name__ == "__main__":
 
     finally:                   # this block will run no matter how the try block exits
         print("Cleaning up")
-        GPIO.output(23, GPIO.LOW)
-        GPIO.output(24, GPIO.LOW)
+        for pin in PROGRESS:
+            GPIO.output(pin, GPIO.LOW)
+        GPIO.output(GREEN, GPIO.LOW)
         GPIO.cleanup()         # clean up after yourself
