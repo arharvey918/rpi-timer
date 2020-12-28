@@ -118,6 +118,7 @@ if __name__ == "__main__":
 
     GPIO.setup(GREEN, GPIO.OUT)
     for pin in PROGRESS:
+        print ("Setting pin %d as output" % pin)
         GPIO.setup(pin, GPIO.OUT)
 
     # Setup event on pin 25 rising edge
