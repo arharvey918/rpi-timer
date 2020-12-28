@@ -108,7 +108,7 @@ def start_timer(seconds):
 
         if delta.days >= 0:
             pin_index = math.ceil(delta.seconds / float(seconds) * len(PROGRESS))
-            pin_index = max(0, pin_index)
+            pin_index = min(max(0, pin_index), len(PROGRESS) - 1)
 
             # Set new tick pin
             print("pin index is %d" % pin_index)
