@@ -99,7 +99,7 @@ def start_timer(seconds):
 
         # Set new tick pin
         counter += 1
-        tick_pin = counter % 5
+        tick_pin = PROGRESS[counter % 5]
 
         if interrupted:
             interrupted = False  # Clear the flag and exit            
