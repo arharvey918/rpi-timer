@@ -103,6 +103,7 @@ def start_timer(seconds):
 
         delta = end - datetime.now()
         pin_index = math.ceil(delta.seconds / float(seconds) * len(PROGRESS))
+        pin_index = max(0, pin_index)
 
         # Set new tick pin
         tick_pin = PROGRESS[pin_index]
