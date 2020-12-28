@@ -78,6 +78,9 @@ def in_progress():
 def complete():
     global GREEN
     flicker()
+    for pin in PROGRESS:
+        GPIO.output(pin, GPIO.LOW)
+
     GPIO.output(GREEN, GPIO.HIGH)
 
 
