@@ -95,7 +95,7 @@ def start_timer(seconds):
     end = start + timedelta(seconds=seconds)
 
     # Set tick pin
-    tick_pin = PROGRESS[len(PROGRESS)]
+    tick_pin = PROGRESS[len(PROGRESS) - 1]
 
     # Loop until we get to end
     while datetime.now() < end:
