@@ -59,11 +59,7 @@ def flicker():
 
 
 def tick():
-    global tick_pin
-    GPIO.output(tick_pin, GPIO.HIGH)
-    time.sleep(.5)
-    GPIO.output(tick_pin, GPIO.LOW)
-    time.sleep(.5)
+    time.sleep(1)
 
 
 def in_progress():
@@ -115,7 +111,11 @@ def start_timer(seconds):
 
             # Set new tick pin
             print("pin index is %d" % pin_index)
+            last_tick_pin = tick_pin
             tick_pin = PROGRESS[pin_index]
+
+            if last_tick_pin != tick_pin:
+                GPIO.output(last_tick_pin, GPIO.LOW)
 
         if interrupted:
             interrupted = False  # Clear the flag and exit            
